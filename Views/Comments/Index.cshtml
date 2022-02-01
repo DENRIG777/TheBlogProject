@@ -1,0 +1,89 @@
+﻿@model IEnumerable<TheBlogProject.Models.Comment>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Body)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Created)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Updated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Moderated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Deleted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ModeratedBody)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ModerationType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Post)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BlogUser)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Moderator)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var comment in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => comment.Body)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => comment.Created)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => comment.Updated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => comment.Moderated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => comment.Deleted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => comment.ModeratedBody)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => comment.ModerationType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => comment.Post.Abstract)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => comment.BlogUser.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => comment.Moderator.Id)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@comment.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@comment.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@comment.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -11,7 +11,7 @@ namespace TheBlogProject.Models
     {
         public int Id { get; set; }
         //WHERE I DECLARED NAVIGATION PROPERTY
-        public string AuthorId { get; set; }
+        public string BlogUserId { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters", MinimumLength = 2)]
@@ -38,7 +38,9 @@ namespace TheBlogProject.Models
         public IFormFile Image { get; set; }
 
         //NAVIGATION PREPERTY
-        public virtual IdentityUser Author { get; set;}
+
+        [Display(Name = "Author")]
+        public virtual BlogUser BlogUser { get; set;}
         public virtual ICollection<Post> Posts { get; set; } = new HashSet<Post>();
 
     }

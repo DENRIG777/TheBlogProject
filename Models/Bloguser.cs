@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TheBlogProject.Models
 {
-    public class Bloguser : IdentityUser
+    public class BlogUser : IdentityUser
     {
         [Required]
         [StringLength(50, ErrorMessage = "The {0} must be at least {2} and at most {1} characters", MinimumLength = 2)]
