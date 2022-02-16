@@ -32,7 +32,7 @@ namespace TheBlogProject
             //options.UseSqlServer(
             // Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(
+             options.UseNpgsql(
             Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
