@@ -13,6 +13,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using TheBlogProject.Data;
 using TheBlogProject.Models;
+using TheBlogProject.Services;
+using TheBlogProject.ViewModels;
 
 namespace TheBlogProject
 {
@@ -31,6 +33,7 @@ namespace TheBlogProject
             //services.AddDbContext<ApplicationDbContext>(options =>
             //options.UseSqlServer(
             // Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDbContext<ApplicationDbContext>(options =>
              options.UseNpgsql(
             Configuration.GetConnectionString("DefaultConnection")));
@@ -47,6 +50,16 @@ namespace TheBlogProject
             services.AddControllersWithViews();
 
             services.AddRazorPages();
+
+            //Register my custom DataService class as a service
+            services.AddScoped<DataService>();
+
+            //Register a preconfigured instance of the MailSettings class
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddScoped<IBlogEmailSender, EmailService>();
+
+            //Register our Image Service
+            services.AddScoped<IImageService, BasicImageService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
