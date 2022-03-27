@@ -73,8 +73,8 @@ namespace TheBlogProject.Controllers
                 blog.ImageData = await _imageService.EncodeImageAsync(blog.Image);
                 blog.ContentType = _imageService.ContentType(blog.Image);
 
-                _context.Add(blog);
-                await _context.SaveChangesAsync();
+                _context.Add(blog); 
+                await _context.SaveChangesAsync(); 
                 return RedirectToAction(nameof(Index));
             }
             ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", blog.BlogUserId);
