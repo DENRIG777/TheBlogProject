@@ -53,7 +53,7 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <div class="row mb-4">
+                        <div class="row d-grid gap-2 mb-4">
                             <div class="col">
                                 <input type="text" class="form-control" id="TagEntry"/>
                             </div>
@@ -61,16 +61,16 @@
 
                         <div class="row">
                             <div class="col d-grid gap-2 ">
-                                <button name="Add" type="button" class="btn btn-dark btn-sm " >Add</button>
+                                <button onclick="AddTag()" name="Add" type="button" class="btn btn-dark btn-sm">Add</button>
                             </div>
                             <div class="col d-grid gap-2  ">
-                                <button name="Delete" type="button" class="btn btn-dark btn-sm  ">Delete</button>
+                                <button onclick="DeleteTag()" name="Delete" type="button" class="btn btn-dark btn-sm" >Delete</button>
                             </div>
                         </div>
 
                     </div>
                     <div class="col">
-                        <select class="d-grid gap-2 col-12 mx-auto" name="tagValues" id="TagList" multiple></select>
+                        <select class="col-12 pb-4" name="tagValues" id="TagList" multiple></select>
                     </div>
                 </div>
             </div>
@@ -95,6 +95,8 @@
 </div>
 
 @section Scripts{
+
+    <script src="~/js/Custom.js"></script>
 
     <script>
         //Default font size but not for placeholder...
