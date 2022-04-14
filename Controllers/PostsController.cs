@@ -35,10 +35,23 @@ namespace TheBlogProject.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Posts/Details/5
-        public async Task<IActionResult> Details(int? id)
+      //  public async Task<IActionResult> TagIndex(string tag, int? page)
+      //  {
+            //get all Post that contain this tag
+      //      var allPostIds = _context.Tags.Where(t => t.Text == tag).Select(t => t.PostId);
+       //     var post =  _context.Posts.Where(p => allPostIds.Contains(p.Id)).ToList();
+      //  }
+
+
+
+        // GET: Posts/Details/id
+        // 4-6-22 i need to come back and add string slug and replace the ids with slug as well i cold not get it to 
+        //render when i had it that way.
+        public async Task<IActionResult> Details(string slug)
         {
-            if (id == null)
+            //ViewData["Title"] = "Blog Post";
+
+            if (string.IsNullOrEmpty(slug))
             {
                 return NotFound();
             }
@@ -46,7 +59,8 @@ namespace TheBlogProject.Controllers
             var post = await _context.Posts
                 .Include(p => p.Blog)
                 .Include(p => p.BlogUser)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(p => p.Tags)
+                .FirstOrDefaultAsync(m => m.Slug == slug);
             if (post == null)
             {
                 return NotFound();
@@ -125,12 +139,13 @@ namespace TheBlogProject.Controllers
                 return NotFound();
             }
 
-            var post = await _context.Posts.FindAsync(id);
+            var post = await _context.Posts.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == id);
             if (post == null)
             {
                 return NotFound();
             }
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name", post.BlogId);
+            ViewData["TagValues"] = string.Join(",", post.Tags.Select(t => t.Text));
             
             return View(post);
         }
@@ -140,7 +155,7 @@ namespace TheBlogProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus")] Post post, IFormFile newImage)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus")] Post post, IFormFile newImage, List<string> tagvalues)
         {
             if (id != post.Id)
             {
@@ -151,7 +166,7 @@ namespace TheBlogProject.Controllers
             {
                 try
                 {
-                    var newPost = await _context.Posts.FindAsync(post.Id);
+                    var newPost = await _context.Posts.Include(p =>p.Tags).FirstOrDefaultAsync(p => p.Id == post.Id);
 
                     newPost.Updated = DateTime.Now;
                     newPost.Title = post.Title;
@@ -163,7 +178,21 @@ namespace TheBlogProject.Controllers
                     {
                         newPost.ImageData = await _imageService.EncodeImageAsync(newImage);
                         newPost.ContentType = _imageService.ContentType(newImage);
-                    }    
+                    }
+
+                    //Remove all tags previously associated with this post
+                    _context.Tags.RemoveRange(newPost.Tags);
+
+                    //add in the new Tags from the Edit form
+                    foreach(var tagText in tagvalues)
+                    {
+                        _context.Add(new Tag()
+                        {
+                            PostId = post.Id,
+                            BlogUserId = newPost.BlogUserId,
+                            Text = tagText
+                        });
+                    }
 
                     await _context.SaveChangesAsync();
                 }

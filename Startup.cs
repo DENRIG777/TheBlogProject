@@ -89,6 +89,13 @@ namespace TheBlogProject
 
             app.UseEndpoints(endpoints =>
             {
+                //use slugs for custom routing
+                //Add new endpoint and map controller route
+               // endpoints.MapControllerRoute(
+                  //  name: "SlugRoute",
+                  //  pattern: "Blog/Post/{slug}",
+                  //  defaults: new { controller = "Post", action = "Details" }) ;
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
