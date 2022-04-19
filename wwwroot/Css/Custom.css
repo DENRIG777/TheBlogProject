@@ -6,3 +6,8 @@
 option{
     font-weight: bolder
 }
+/*sweet alert pop-up*/
+div.swal2-container.swal2-center.swwal2.-backdrop-show > {
+    outline: 4px solid black;
+    border: 2px solid #00ff21;
+}

@@ -10,7 +10,7 @@ function AddTag()
     if (searchResult != null) {
         //Trigger my sweet alert for what ever condition is contained in the searchResult var
         swalWithDarkButton.fire({
-            html: "span class='font-weight-bolder'>${seachResult.toupperCase()}</span>"
+            html: `<span class="font-weight-bolder">${searchResult.toUpperCase()}</span>`
         });
         return true;
     }
@@ -27,24 +27,25 @@ function AddTag()
 
 function DeleteTag() {
     let tagCount = 1;
+
     let tagList = document.getElementById("TagList");
     if (!tagList) return false;
 
     if (tagList.selectedIndex == -1) {
         swalWithDarkButton.fire({
-            html: "<span class='font-weight-bolder'>CHOOSE A TAG BEFORE DELETING</span>"
-        });
+            html: '<span class="font-weight-bolder">CHOOSE A TAG BEFORE DELETING</span>'
+        })
+
+        return true;
     }
 
     while (tagCount > 0) {
-        if (taglist.selectedIndex >= 0) {
+        if (tagList.selectedIndex >= 0) {
             tagList.options[tagList.selectedIndex] = null;
             --tagCount;
-        }
-        else
+        } else {
             tagCount = 0;
-        index--;
-
+        }
     }
 }
 

@@ -34,6 +34,17 @@ namespace TheBlogProject.Controllers
             var applicationDbContext = _context.Posts.Include(p => p.Blog).Include(p => p.BlogUser);
             return View(await applicationDbContext.ToListAsync());
         }
+        //BlogPostIndex
+        public async Task<IActionResult> BlogPostIndex(int? id)
+        {
+            if(id is null)
+            {
+                return NotFound();
+            }
+            var posts = _context.Posts.Where(p => p.BlogId == id).ToList();
+
+            return View("Index", posts);
+        }
 
       //  public async Task<IActionResult> TagIndex(string tag, int? page)
       //  {
@@ -97,14 +108,37 @@ namespace TheBlogProject.Controllers
 
                 //Creat the slug an determine if it is unique
                 var slug = _slugService.UrlFriendly(post.Title);
-                if(!_slugService.IsUnique(slug))
+
+                //create a variable to store wether an error has occurred
+                var validationError = false;
+                if (string.IsNullOrEmpty(slug))
                 {
+                    validationError = true;
+                    ModelState.AddModelError("Title", "The Title you provided cannot be used as it results in a empty slug.");
+                }
+
+                //detect incoming duplicate slugs
+                if (!_slugService.IsUnique(slug))
+                {
+                    validationError = true;
                     ModelState.AddModelError("Title", "The Title you provided cannot be used as it results in a duplicate slug.");
+                }
+
+               
+
+                if(validationError)
+                {
                     ViewData["TagValues"] = string.Join(",", tagValues);
                     return View(post);
                 }
+
+                //if all this gos thrugh i can use the slug as a custom rought to the details because its one of a kind
                 post.Slug = slug;
-              
+            
+
+                
+
+
 
                 _context.Add(post);
                 await _context.SaveChangesAsync();
@@ -166,6 +200,7 @@ namespace TheBlogProject.Controllers
             {
                 try
                 {
+                    //the originalPost
                     var newPost = await _context.Posts.Include(p =>p.Tags).FirstOrDefaultAsync(p => p.Id == post.Id);
 
                     newPost.Updated = DateTime.Now;
@@ -173,6 +208,24 @@ namespace TheBlogProject.Controllers
                     newPost.Abstract = post.Abstract;
                     newPost.Content = post.Content;
                     newPost.ReadyStatus = post.ReadyStatus;
+
+                    //checking if edit contains the smae slug
+                    var newSlug = _slugService.UrlFriendly(post.Title);
+                    if(newSlug != newPost.Slug)
+                    {
+                        if(_slugService.IsUnique(newSlug))
+                        {
+                            newPost.Title = post.Title;
+                            newPost.Slug = newSlug;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("Title", "This Title cannot beused as it results in a duplicate slug");
+                            ViewData["TagValues"] = string.Join(",", post.Tags.Select(t => t.Text));
+                            return View(post);
+                        }
+                    }
+
 
                     if(newImage is not null)
                     {
