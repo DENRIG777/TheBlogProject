@@ -22,7 +22,8 @@ namespace TheBlogProject.Models
         public DateTime? Moderated { get; set; }
         public DateTime? Deleted { get; set; }
 
-        [Required]
+        //i went in pg admin and made the ModeratedBody not null in order to be true in ModelState.IsValid in my comments 
+        //controller after deleating the required feild
         [StringLength(500, ErrorMessage = "The {0} must be at least {2} and no more {1} characters long", MinimumLength = 2)]
         [Display(Name = "Moderated Comment")]
         public string ModeratedBody { get; set; }
