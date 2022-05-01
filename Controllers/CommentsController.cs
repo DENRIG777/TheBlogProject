@@ -121,6 +121,48 @@ namespace TheBlogProject.Controllers
             ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Title", comment.PostId);
             return View(comment);
         }
+        // POST: Comments/Moderate/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Moderate(int id, [Bind("Id,Body,ModeratedBody,ModerationType")] Comment comment)
+        {
+            if (id != comment.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                var newComment = await _context.Comments
+                    .Include(c => c.Post)
+                    .FirstOrDefaultAsync(c => c.Id == comment.Id);
+                try
+                {
+                    newComment.ModeratedBody = comment.ModeratedBody;
+                    newComment.ModerationType = comment.ModerationType;
+
+                    newComment.Moderated = DateTime.Now.ToUniversalTime();
+                    newComment.ModeratorId = _userManager.GetUserId(User);
+
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CommentExists(comment.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return RedirectToAction("Details", "Posts", new { slug = newComment.Post.Slug }, "commentSection");
+            }
+
+            return View(comment);
+        }
 
         // GET: Comments/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -146,12 +188,12 @@ namespace TheBlogProject.Controllers
         // POST: Comments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, string slug)
         {
             var comment = await _context.Comments.FindAsync(id);
             _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Posts", new { slug }, "commentSection");
         }
 
         private bool CommentExists(int id)

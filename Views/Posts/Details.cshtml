@@ -196,7 +196,7 @@
                         <div class="modal-body">
                             <form asp-controller="Comments" asp-action="Edit" method="post">
                                 @Html.Hidden("Id", comment.Id)
-
+                                
                                 <div class="form-group mb-2">
                                     <textarea name="Body" rows="5" class="form-control" style="height: auto;" required>@comment.Body</textarea>
                                 </div>
